@@ -19,6 +19,11 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import LetterAvatars from "./ProfilePic";
+import { getAvatarPicture } from "../util/NetworkAPI";
+import { useEffect, useMemo, useCallback } from "react";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import { Button } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -88,8 +93,13 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function MiniDrawer() {
+  let isLoading = false;
+  const avatarImage = getAvatarPicture();
+
+  const [avatar, setAvatar] = React.useState();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [dispPics, setDispPics] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -98,6 +108,24 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleDisplayPics = () => {
+    if (dispPics === false) {
+      setDispPics(true);
+    } else if (dispPics === true) setDispPics(false);
+  };
+
+  useMemo(() => {
+    isLoading = true;
+    setAvatar(avatarImage);
+    console.log(avatarImage);
+
+    return () => {
+      isLoading = false;
+    };
+  }, [avatarImage.length]);
+
+  console.log(avatar);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -188,35 +216,24 @@ export default function MiniDrawer() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
-          dolor purus non enim praesent elementum facilisis leo vel. Risus at
-          ultrices mi tempus imperdiet. Semper risus in hendrerit gravida rutrum
-          quisque non tellus. Convallis convallis tellus id interdum velit
-          laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed
-          adipiscing. Amet nisl suscipit adipiscing bibendum est ultricies
-          integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate
-          eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo
-          quis imperdiet massa tincidunt. Cras tincidunt lobortis feugiat
-          vivamus at augue. At augue eget arcu dictum varius duis at consectetur
-          lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa sapien
-          faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-          ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-          elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse
-          sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
-          mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis
-          risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas
-          purus viverra accumsan in. In hendrerit gravida rutrum quisque non
-          tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
-          morbi tristique senectus et. Adipiscing elit duis tristique
-          sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        <Button variant="outlined" onClick={() => handleDisplayPics()}>
+          Primary
+        </Button>
+
+        {!isLoading && dispPics ? (
+          <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+            {avatar.map((image) => (
+              <ImageListItem key={image}>
+                <img
+                  src={`${image}`}
+                  srcSet={`${image}`}
+                  alt={image.title}
+                  loading="lazy"
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        ) : null}
       </Box>
     </Box>
   );
