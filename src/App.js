@@ -1,7 +1,6 @@
-import LetterAvatars from './ProfilePic';
+import LetterAvatars from "./components/ProfilePic";
+import MiniDrawer from "./components/SideBar";
 function App() {
-  return (
-   <LetterAvatars/> //call function/ comp
-  );
+  return <MiniDrawer />;
 }
-export default App 
+export default App;
